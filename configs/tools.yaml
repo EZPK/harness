@@ -1,0 +1,381 @@
+# Tools Configuration
+# This file configures all tool-specific settings
+
+# ---------------------------------------------------------------------------
+# Sandbox Configuration (applies to PythonTool and other sandboxed tools)
+# ---------------------------------------------------------------------------
+sandbox:
+  timeout: 30              # Default timeout for sandboxed operations (seconds)
+  max_memory_mb: 512       # Maximum memory in MB
+  max_cpu: 1.0            # Maximum CPU cores
+  enable_network: false   # Network access disabled by default
+  enable_file_io: true    # File I/O enabled by default
+  
+  # Allowed Python modules in sandbox
+  allowed_modules:
+    - math
+    - json
+    - os
+    - sys
+    - re
+    - datetime
+    - collections
+    - itertools
+    - functools
+    - pathlib
+    - typing
+    - dataclasses
+    - abc
+    - enum
+    - decimal
+    - fractions
+    - random
+    - statistics
+    - string
+    - textwrap
+    - unittest
+    - copy
+    - pickle
+    - hashlib
+    - hmac
+    - base64
+    - urllib.parse
+    - http.cookiejar
+  
+  # Blocked Python modules (security)
+  blocked_modules:
+    - subprocess
+    - os.system
+    - shutil
+    - socket
+    - http
+    - urllib.request
+    - urllib.error
+    - requests
+    - httpx
+    - aiohttp
+    - boto3
+    - numpy
+    - pandas
+    - tensorflow
+    - torch
+    - pickle  # Allow pickle but be careful
+    - ctypes
+    - multiprocessing
+    - threading
+    - asyncio
+    - importlib
+    - builtins
+    - gc
+    - inspect
+    - dis
+    - traceback
+    - linecache
+    - tokenize
+    - ast
+    - symtable
+    - token
+    - keyword
+  
+  allowed_paths:
+    - ./tmp
+    - ./sandbox
+    - ./src
+    - ./tests
+
+# ---------------------------------------------------------------------------
+# Shell Tool
+# ---------------------------------------------------------------------------
+shell:
+  name: ShellTool
+  description: Execute shell commands in a controlled environment
+  enabled: true
+  timeout: 60
+  max_retries: 2
+  requires_approval: false
+  
+  # Allowed commands
+  allowed_commands:
+    - ls
+    - cd
+    - cat
+    - grep
+    - find
+    - mkdir
+    - rmdir
+    - echo
+    - pwd
+    - wc
+    - head
+    - tail
+    - less
+    - more
+    - sort
+    - uniq
+    - cut
+    - awk
+    - sed
+    - tr
+    - tee
+    - touch
+    - cp
+    - mv
+    - chmod
+    - chown
+  
+  # Blocked commands (dangerous)
+  blocked_commands:
+    - rm
+    - dd
+    - rmdir
+    - del
+    - kill
+    - pkill
+    - killall
+    - sudo
+    - su
+    - apt
+    - apt-get
+    - yum
+    - dnf
+    - pip
+    - pip3
+    - curl
+    - wget
+    - scp
+    - sftp
+    - ssh
+    - nc
+    - netcat
+    - telnet
+    - ftp
+    - git
+    - docker
+    - docker-compose
+    - kubectl
+    - aws
+    - gcloud
+    - azure
+  
+  # Allow any command (DANGEROUS - override above lists)
+  allow_any: false
+
+# ---------------------------------------------------------------------------
+# Python Tool
+# ---------------------------------------------------------------------------
+python:
+  name: PythonTool
+  description: Execute Python code in sandbox
+  enabled: true
+  timeout: 60
+  max_retries: 2
+  requires_approval: false
+  
+  # Use the global sandbox config defined above
+  sandbox:
+    timeout: 30
+    max_memory_mb: 256
+    enable_network: false
+
+# ---------------------------------------------------------------------------
+# Git Tool
+# ---------------------------------------------------------------------------
+git:
+  name: GitTool
+  description: Git version control operations
+  enabled: true
+  timeout: 120
+  max_retries: 2
+  requires_approval: false
+  
+  # Allowed Git operations
+  allowed_operations:
+    - clone
+    - pull
+    - push
+    - add
+    - commit
+    - checkout
+    - branch
+    - status
+    - log
+    - diff
+    - show
+    - tag
+    - fetch
+    - reset
+    - merge
+    - rebase
+    - stash
+  
+  # Blocked operations
+  blocked_operations:
+    - reset --hard
+    - push --force
+    - push -f
+    - rebase -i
+    - merge --no-ff
+  
+  # Allow force pushing (DANGEROUS)
+  force_push_allowed: false
+
+# ---------------------------------------------------------------------------
+# File I/O Tool
+# ---------------------------------------------------------------------------
+file_io:
+  name: FileIOTool
+  description: File read/write operations
+  enabled: true
+  timeout: 30
+  max_retries: 2
+  requires_approval: false
+  
+  # Allowed filesystem paths (relative to project root)
+  allowed_paths:
+    - .
+    - ./src
+    - ./tests
+    - ./docs
+    - ./configs
+    - ./scripts
+    - ./tmp
+    - ./sandbox
+  
+  # Blocked filesystem paths (absolute paths are always blocked)
+  blocked_paths:
+    - /etc
+    - /usr
+    - /bin
+    - /sbin
+    - /root
+    - /home
+    - /opt
+    - /var
+    - /tmp
+    - /dev
+    - /proc
+    - /sys
+  
+  # Allowed file extensions
+  allowed_extensions:
+    - .py
+    - .pyx
+    - .pyi
+    - .pyw
+    - .txt
+    - .md
+    - .markdown
+    - .rst
+    - .yaml
+    - .yml
+    - .json
+    - .toml
+    - .ini
+    - .cfg
+    - .conf
+    - .csv
+    - .tsv
+    - .xml
+    - .html
+    - .htm
+    - .css
+    - .js
+    - .ts
+    - .jsx
+    - .tsx
+    - .vue
+    - .sql
+    - .sh
+    - .bash
+    - .zsh
+  
+  # Maximum file size to read (MB)
+  max_file_size_mb: 10
+
+# ---------------------------------------------------------------------------
+# Test Runner Tool
+# ---------------------------------------------------------------------------
+test_runner:
+  name: TestRunnerTool
+  description: Execute software tests
+  enabled: true
+  timeout: 300
+  max_retries: 1
+  requires_approval: false
+  
+  # Supported test frameworks
+  test_frameworks:
+    - pytest
+    - unittest
+    # - nose2
+    # - doctest
+  
+  # Maximum time per test (seconds)
+  max_test_time: 60
+  
+  # Run tests in parallel
+  parallel_tests: false
+
+# ---------------------------------------------------------------------------
+# Linter Tool
+# ---------------------------------------------------------------------------
+linter:
+  name: LinterTool
+  description: Code linting and style checking
+  enabled: true
+  timeout: 60
+  max_retries: 1
+  requires_approval: false
+  
+  # Linters to use
+  linters:
+    - pylint
+    - flake8
+    # - black
+    # - isort
+    # - mypy
+  
+  # Config files for each linter
+  config_files:
+    pylint: .pylintrc
+    flake8: .flake8
+    black: pyproject.toml
+    isort: pyproject.toml
+    mypy: mypy.ini
+  
+  # Fail if linting errors are found
+  fail_on_error: true
+
+# ---------------------------------------------------------------------------
+# Formatter Tool (optional, disabled by default)
+# ---------------------------------------------------------------------------
+# formatter:
+#   name: FormatterTool
+#   description: Code formatting
+#   enabled: true
+#   timeout: 60
+#   formatters:
+#     - black
+#     - isort
+#   config_files:
+#     black: pyproject.toml
+#     isort: pyproject.toml
+
+# ---------------------------------------------------------------------------
+# Package Manager Tool (optional, disabled by default)
+# ---------------------------------------------------------------------------
+# package_manager:
+#   name: PackageManagerTool
+#   description: Manage Python packages
+#   enabled: true
+#   timeout: 120
+#   allowed_commands:
+#     - install
+#     - uninstall
+#     - list
+#     - show
+#     - search
+#   blocked_commands:
+#     - install --upgrade
+#     - install -U
+#   max_package_size_mb: 100

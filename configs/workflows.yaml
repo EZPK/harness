@@ -1,0 +1,326 @@
+# Workflows Configuration
+# Predefined workflows for common development tasks
+
+# ---------------------------------------------------------------------------
+# Feature Implementation Workflow
+# ---------------------------------------------------------------------------
+feature_implementation:
+  name: Feature Implementation
+  description: Complete workflow for implementing a new feature
+  version: "1.0"
+  parallel_steps: true
+  
+  steps:
+    - name: analyze_requirements
+      agent: planner
+      description: Analyze the feature requirements and scope
+      timeout: 120
+      inputs:
+        focus: requirements_analysis
+        
+    - name: design_architecture
+      agent: planner
+      description: Design the software architecture for the feature
+      depends_on: [analyze_requirements]
+      timeout: 180
+      inputs:
+        focus: architecture_design
+        
+    - name: create_implementation_plan
+      agent: planner
+      description: Create detailed implementation plan with steps
+      depends_on: [design_architecture]
+      timeout: 120
+      inputs:
+        focus: implementation_plan
+        include_estimates: true
+        
+    - name: implement_backend
+      agent: coder
+      description: Implement the backend code (models, services, APIs)
+      depends_on: [create_implementation_plan]
+      timeout: 300
+      inputs:
+        language: python
+        type: backend
+        quality: production
+        
+    - name: implement_frontend
+      agent: coder
+      description: Implement the frontend code (UI, components)
+      depends_on: [create_implementation_plan]
+      timeout: 300
+      inputs:
+        language: javascript
+        type: frontend
+        quality: production
+        
+    - name: write_unit_tests
+      agent: tester
+      description: Write unit tests for the new feature
+      depends_on: [implement_backend, implement_frontend]
+      timeout: 180
+      inputs:
+        test_type: unit
+        framework: pytest
+        include_mocks: true
+        
+    - name: write_integration_tests
+      agent: tester
+      description: Write integration tests for the new feature
+      depends_on: [implement_backend, implement_frontend]
+      timeout: 180
+      inputs:
+        test_type: integration
+        framework: pytest
+        
+    - name: review_code
+      agent: reviewer
+      description: Review all code for quality, security, and best practices
+      depends_on: [implement_backend, implement_frontend, write_unit_tests, write_integration_tests]
+      timeout: 180
+      inputs:
+        check_security: true
+        check_performance: true
+        check_style: true
+        check_tests: true
+        
+    - name: generate_documentation
+      agent: documenter
+      description: Generate documentation for the new feature
+      depends_on: [review_code]
+      timeout: 120
+      inputs:
+        doc_type: code
+        format: markdown
+        include_examples: true
+
+# ---------------------------------------------------------------------------
+# Bug Fix Workflow
+# ---------------------------------------------------------------------------
+bug_fix:
+  name: Bug Fix
+  description: Workflow for analyzing and fixing bugs
+  version: "1.0"
+  parallel_steps: false
+  
+  steps:
+    - name: analyze_error
+      agent: debugger
+      description: Analyze the error message and logs
+      timeout: 120
+      inputs:
+        focus: error_analysis
+        
+    - name: reproduce_issue
+      agent: debugger
+      description: Attempt to reproduce the bug
+      depends_on: [analyze_error]
+      timeout: 180
+      inputs:
+        focus: bug_reproduction
+        
+    - name: identify_root_cause
+      agent: debugger
+      description: Identify the root cause of the bug
+      depends_on: [reproduce_issue]
+      timeout: 180
+      inputs:
+        focus: root_cause_analysis
+        
+    - name: research_solution
+      agent: researcher
+      description: Research potential solutions
+      depends_on: [identify_root_cause]
+      timeout: 120
+      inputs:
+        focus: best_practices
+        max_results: 5
+        
+    - name: implement_fix
+      agent: coder
+      description: Implement the fix for the bug
+      depends_on: [identify_root_cause, research_solution]
+      timeout: 300
+      inputs:
+        type: bug_fix
+        quality: production
+        
+    - name: write_regression_tests
+      agent: tester
+      description: Write tests to prevent regression
+      depends_on: [implement_fix]
+      timeout: 180
+      inputs:
+        test_type: unit
+        framework: pytest
+        focus: regression
+        
+    - name: verify_fix
+      agent: tester
+      description: Verify the fix resolves the issue
+      depends_on: [write_regression_tests]
+      timeout: 120
+      inputs:
+        test_type: integration
+        
+    - name: review_fix
+      agent: reviewer
+      description: Review the fix for quality and completeness
+      depends_on: [verify_fix]
+      timeout: 120
+
+# ---------------------------------------------------------------------------
+# Code Review Workflow
+# ---------------------------------------------------------------------------
+code_review:
+  name: Code Review
+  description: Complete code review workflow
+  version: "1.0"
+  parallel_steps: true
+  
+  steps:
+    - name: static_analysis
+      agent: reviewer
+      description: Run static analysis (linting, type checking)
+      timeout: 120
+      inputs:
+        check_style: true
+        check_tests: false
+        
+    - name: security_scan
+      agent: reviewer
+      description: Scan for security vulnerabilities
+      timeout: 120
+      inputs:
+        check_security: true
+        check_performance: false
+        check_style: false
+        
+    - name: performance_analysis
+      agent: reviewer
+      description: Analyze code performance
+      timeout: 120
+      inputs:
+        check_performance: true
+        check_security: false
+        check_style: false
+        
+    - name: test_coverage_check
+      agent: tester
+      description: Check test coverage
+      timeout: 120
+      inputs:
+        focus: coverage_analysis
+        
+    - name: generate_review_report
+      agent: documenter
+      description: Generate comprehensive review report
+      depends_on: [static_analysis, security_scan, performance_analysis, test_coverage_check]
+      timeout: 120
+      inputs:
+        doc_type: api
+        format: markdown
+
+# ---------------------------------------------------------------------------
+# Refactoring Workflow
+# ---------------------------------------------------------------------------
+refactoring:
+  name: Refactoring
+  description: Workflow for refactoring existing code
+  version: "1.0"
+  parallel_steps: false
+  
+  steps:
+    - name: analyze_current_code
+      agent: reviewer
+      description: Analyze current code structure and quality
+      timeout: 120
+      inputs:
+        check_style: true
+        check_performance: true
+        
+    - name: identify_improvements
+      agent: planner
+      description: Identify areas for improvement
+      depends_on: [analyze_current_code]
+      timeout: 120
+      inputs:
+        focus: improvement_analysis
+        
+    - name: create_refactoring_plan
+      agent: planner
+      description: Create step-by-step refactoring plan
+      depends_on: [identify_improvements]
+      timeout: 180
+      inputs:
+        focus: refactoring_plan
+        
+    - name: implement_refactoring
+      agent: coder
+      description: Implement the refactoring changes
+      depends_on: [create_refactoring_plan]
+      timeout: 300
+      inputs:
+        type: refactoring
+        quality: production
+        
+    - name: verify_refactoring
+      agent: tester
+      description: Verify refactoring didn't break anything
+      depends_on: [implement_refactoring]
+      timeout: 180
+      inputs:
+        test_type: unit
+        test_type: integration
+        
+    - name: review_refactoring
+      agent: reviewer
+      description: Review the refactored code
+      depends_on: [verify_refactoring]
+      timeout: 120
+
+# ---------------------------------------------------------------------------
+# Documentation Generation Workflow
+# ---------------------------------------------------------------------------
+document_project:
+  name: Document Project
+  description: Generate comprehensive documentation for a project
+  version: "1.0"
+  parallel_steps: true
+  
+  steps:
+    - name: generate_api_docs
+      agent: documenter
+      description: Generate API documentation
+      timeout: 180
+      inputs:
+        doc_type: api
+        format: markdown
+        include_examples: true
+        
+    - name: generate_code_docs
+      agent: documenter
+      description: Generate code-level documentation (docstrings)
+      timeout: 180
+      inputs:
+        doc_type: code
+        format: markdown
+        
+    - name: generate_architecture_docs
+      agent: documenter
+      description: Generate architecture documentation
+      timeout: 180
+      inputs:
+        doc_type: architecture
+        format: markdown
+        
+    - name: create_readme
+      agent: documenter
+      description: Create/update the project README
+      depends_on: [generate_api_docs, generate_code_docs]
+      timeout: 120
+      inputs:
+        doc_type: tutorial
+        format: markdown
+        include_examples: true

@@ -1,0 +1,239 @@
+# Agents Configuration
+# This file configures all agent-specific settings
+
+# Global agent defaults (applied to all agents unless overridden)
+defaults:
+  timeout: 300          # 5 minutes default timeout
+  max_retries: 3
+  retry_delay: 1.0
+
+# ---------------------------------------------------------------------------
+# God Agent (Orchestrateur Principal)
+# ---------------------------------------------------------------------------
+god:
+  name: GodAgent
+  description: Main orchestrator agent for software development tasks
+  enabled: true
+  timeout: 600           # 10 minutes for complex orchestration
+  max_retries: 2
+  max_concurrent_tasks: 10
+  
+  # Task decomposition strategy
+  # - template: Use predefined templates for common tasks
+  # - semantic: Analyze request semantically
+  # - hybrid: Combine both approaches
+  decomposition_strategy: template
+  
+  # Routing strategy for assigning tasks to specialist agents
+  # - keyword: Match based on keywords in the task
+  # - capability: Match based on agent capabilities
+  # - hybrid: Use both approaches
+  routing_strategy: keyword
+
+# ---------------------------------------------------------------------------
+# Planner Agent
+# ---------------------------------------------------------------------------
+planner:
+  name: PlannerAgent
+  description: Agent for planning software development tasks and architecture
+  enabled: true
+  timeout: 180
+  
+  # Planning depth (how many levels of subtasks to create)
+  max_plan_depth: 5
+  
+  # Effort estimation accuracy
+  # - rough: Quick, high-level estimates
+  # - detailed: Comprehensive analysis
+  estimate_accuracy: detailed
+  
+  capabilities:
+    - name: task_breaking
+      description: Break down complex tasks into manageable subtasks
+      version: "1.0"
+    - name: architecture_design
+      description: Design software architecture and component structure
+      version: "1.0"
+    - name: effort_estimation
+      description: Estimate time and complexity of development tasks
+      version: "1.0"
+
+# ---------------------------------------------------------------------------
+# Coder Agent
+# ---------------------------------------------------------------------------
+coder:
+  name: CoderAgent
+  description: Agent for implementing code
+  enabled: true
+  timeout: 300
+  
+  # Supported programming languages
+  specializations:
+    - python
+    - javascript
+    - typescript
+  
+  # Code quality settings
+  code_quality_level: standard  # draft | standard | production
+  include_comments: true
+  include_tests: true
+  
+  capabilities:
+    - name: code_generation
+      description: Generate new code based on requirements
+      version: "1.0"
+      required_tools: ["python", "file_io"]
+    - name: code_completion
+      description: Complete existing code snippets
+      version: "1.0"
+      required_tools: ["python", "file_io"]
+    - name: refactoring
+      description: Improve existing code structure
+      version: "1.0"
+      required_tools: ["python", "file_io"]
+
+# ---------------------------------------------------------------------------
+# Reviewer Agent
+# ---------------------------------------------------------------------------
+reviewer:
+  name: ReviewerAgent
+  description: Agent for reviewing and improving code quality
+  enabled: true
+  timeout: 120
+  
+  # Review checks
+  check_security: true
+  check_performance: true
+  check_style: true
+  check_tests: true
+  
+  # Minimum test coverage requirement (%)
+  min_test_coverage: 80.0
+  
+  capabilities:
+    - name: code_review
+      description: Review code for quality, style, and best practices
+      version: "1.0"
+      required_tools: ["linter"]
+    - name: security_analysis
+      description: Analyze code for security vulnerabilities
+      version: "1.0"
+    - name: performance_analysis
+      description: Identify performance bottlenecks
+      version: "1.0"
+
+# ---------------------------------------------------------------------------
+# Tester Agent
+# ---------------------------------------------------------------------------
+tester:
+  name: TesterAgent
+  description: Agent for creating and running tests
+  enabled: true
+  timeout: 180
+  
+  # Types of tests to generate
+  test_types:
+    - unit
+    - integration
+    # - e2e  # Disabled by default for speed
+  
+  test_framework: pytest
+  generate_mocks: true
+  
+  capabilities:
+    - name: test_generation
+      description: Generate test cases based on code analysis
+      version: "1.0"
+      required_tools: ["test_runner"]
+    - name: test_execution
+      description: Execute tests and report results
+      version: "1.0"
+      required_tools: ["test_runner"]
+    - name: test_analysis
+      description: Analyze test failures and suggest fixes
+      version: "1.0"
+
+# ---------------------------------------------------------------------------
+# Debugger Agent
+# ---------------------------------------------------------------------------
+debugger:
+  name: DebuggerAgent
+  description: Agent for debugging issues and finding root causes
+  enabled: true
+  timeout: 300
+  
+  max_log_lines: 1000
+  enable_reproduction: true
+  suggest_fixes: true
+  
+  capabilities:
+    - name: error_analysis
+      description: Analyze error messages and logs
+      version: "1.0"
+    - name: bug_reproduction
+      description: Reproduce reported bugs
+      version: "1.0"
+    - name: root_cause_analysis
+      description: Identify the root cause of issues
+      version: "1.0"
+
+# ---------------------------------------------------------------------------
+# Researcher Agent
+# ---------------------------------------------------------------------------
+researcher:
+  name: ResearcherAgent
+  description: Agent for researching information and documentation
+  enabled: true
+  timeout: 120
+  
+  # Information sources to search
+  search_sources:
+    - docs
+    # - github    # Requires API key
+    # - stackoverflow  # Requires API key
+    # - web       # Requires web access
+  
+  max_results: 5
+  summarize_results: true
+  
+  capabilities:
+    - name: documentation_lookup
+      description: Find relevant documentation
+      version: "1.0"
+    - name: library_research
+      description: Research third-party libraries and tools
+      version: "1.0"
+    - name: best_practices
+      description: Find best practices and patterns
+      version: "1.0"
+
+# ---------------------------------------------------------------------------
+# Documenter Agent
+# ---------------------------------------------------------------------------
+documenter:
+  name: DocumenterAgent
+  description: Agent for generating documentation
+  enabled: true
+  timeout: 120
+  
+  # Types of documentation to generate
+  doc_types:
+    - code
+    - api
+    # - architecture  # Complex, enable when needed
+    # - tutorial     # Time-consuming
+  
+  format: markdown
+  include_examples: true
+  
+  capabilities:
+    - name: docstring_generation
+      description: Generate docstrings for code
+      version: "1.0"
+    - name: api_documentation
+      description: Generate API documentation
+      version: "1.0"
+      required_tools: ["file_io"]
+    - name: markdown_generation
+      description: Create markdown documentation
+      version: "1.0"
