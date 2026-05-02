@@ -48,6 +48,7 @@ class Alert:
     alert_id: str
     name: str
     severity: AlertSeverity
+    message: str
     status: AlertStatus = AlertStatus.FIRING
     
     # Timestamps
@@ -55,9 +56,6 @@ class Alert:
     updated_at: datetime = field(default_factory=datetime.utcnow)
     resolved_at: Optional[datetime] = None
     acknowledged_at: Optional[datetime] = None
-    
-    # Content
-    message: str
     description: str = ""
     
     # Context

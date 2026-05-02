@@ -36,7 +36,6 @@ from .god import (
     RoutingStrategy,
     DecompositionStrategy,
     TaskType,
-    TaskPriority as GodTaskPriority,
     WorkflowStep,
     WorkflowDefinition,
     TaskAssignment,

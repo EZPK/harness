@@ -691,6 +691,11 @@ def require_permission(
 permission_system = PermissionSystem()
 
 
+def get_permission_system() -> PermissionSystem:
+    """Get the global permission system instance."""
+    return permission_system
+
+
 # Convenience functions
 def has_permission(role: Union[Role, str], action: Union[Action, str], resource: Union[Resource, str]) -> bool:
     """Check if a role has a permission (convenience function)."""

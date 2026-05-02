@@ -5,6 +5,8 @@ Defines the foundational BaseAgent class that all other agents inherit from.
 This is the core of the agent hierarchy (1.6% agent logic, 98.4% harness infrastructure).
 """
 
+from __future__ import annotations
+
 import asyncio
 import json
 import uuid
@@ -22,7 +24,7 @@ from core.aci.responses import Response, TaskAssignmentResponse, TaskResultRespo
 from core.sandbox.executor import SandboxExecutor
 from core.sandbox.permissions import PermissionSystem, get_permission_system
 from configs.schemas import AgentConfig, AgentCapability
-from configs import get_agent_config, get_config
+from configs.settings import get_agent_config, get_config
 
 from core.monitoring import (
     get_metrics_collector,
@@ -1172,12 +1174,17 @@ class BaseWorkflow(ABC):
         name: str,
         agents: Optional[Dict[str, BaseAgent]] = None,
     ):
-        self.name = name
+        self._name = name
         self._agents = agents or {}
         self._steps = []
     
+    @property
+    def name(self) -> str:
+        """Get the workflow name."""
+        return self._name
+    
     @abstractmethod
-    async def execute(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, input_data: Dict[str, Any]) -> Any:
         """Execute the workflow."""
         pass
     
@@ -1223,22 +1230,40 @@ class HybridAgent(BaseAgent, BaseWorkflow):
         """Execute a task (to be implemented by subclasses)."""
         pass
     
-    async def execute(self, task: Dict[str, Any], **kwargs) -> Any:
+    def add_step(self, step_definition: Dict[str, Any]) -> None:
+        """Add a step to the workflow (required by BaseWorkflow)."""
+        # For hybrid agents, we can store steps for workflow execution
+        if not hasattr(self, '_workflow_steps'):
+            self._workflow_steps = []
+        self._workflow_steps.append(step_definition)
+    
+    async def execute(self, input_data: Dict[str, Any], **kwargs) -> Any:
         """
         Execute a task or workflow.
         
         For hybrid agents, this can either execute a task directly
         or orchestrate a workflow based on the task type.
+        This method satisfies both BaseAgent.execute and BaseWorkflow.execute.
         """
         # Check if this is a workflow task
-        task_type = task.get("type") or task.get("action")
+        task_type = input_data.get("type") or input_data.get("action")
         
         if task_type == "workflow":
-            # Execute as workflow
-            return await BaseWorkflow.execute(self, task)
+            # Execute as workflow using BaseWorkflow interface
+            return await self._execute_workflow(input_data)
         else:
-            # Execute as regular task
-            return await BaseAgent.execute(self, task, **kwargs)
+            # Execute as regular task using BaseAgent interface
+            return await BaseAgent.execute(self, input_data, **kwargs)
+    
+    async def _execute_workflow(self, workflow_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Internal workflow execution."""
+        # Default implementation - subclasses can override
+        # Execute steps in order
+        results = {}
+        if hasattr(self, '_workflow_steps'):
+            for i, step in enumerate(self._workflow_steps):
+                results[f"step_{i}"] = await self.execute(step)
+        return {"status": "completed", "results": results}
 
 
 # =============================================================================

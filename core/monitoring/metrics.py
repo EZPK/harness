@@ -652,9 +652,8 @@ class HarnessMetrics:
         labels=["agent_type"],
     )
     
-    AGENT_EXECUTION_TIME = Metric(
+    AGENT_EXECUTION_TIME = Histogram(
         name="harness_agent_execution_time_seconds",
-        metric_type=MetricType.HISTOGRAM,
         description="Time taken to execute tasks",
         labels=["agent_type", "task_type"],
         buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0, 60.0, 120.0, 300.0, 600.0],
@@ -668,9 +667,8 @@ class HarnessMetrics:
         labels=["tool_name", "status"],
     )
     
-    TOOL_EXECUTION_TIME = Metric(
+    TOOL_EXECUTION_TIME = Histogram(
         name="harness_tool_execution_time_seconds",
-        metric_type=MetricType.HISTOGRAM,
         description="Time taken to execute tools",
         labels=["tool_name"],
         buckets=[0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0, 60.0],

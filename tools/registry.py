@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field
 from .base import BaseTool, ToolMetadata, ToolSecurityLevel
 from core.aci.interface import ACIInterface, InMemoryACI
 from core.sandbox.executor import SandboxExecutor
-from configs import get_tool_config
+from configs.settings import get_tool_config
 
 from core.monitoring import (
     get_metrics_collector,

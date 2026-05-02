@@ -19,6 +19,7 @@ from .permissions import (
     Role,
     Action,
     Resource,
+    get_permission_system,
 )
 from .isolation import (
     IsolationManager,
@@ -40,6 +41,7 @@ __all__ = [
     "Role",
     "Action",
     "Resource",
+    "get_permission_system",
     # Isolation
     "IsolationManager",
     "IsolationMode",

@@ -32,7 +32,7 @@ from core.aci.commands import Command, TaskAssignmentCommand, TaskResultCommand
 from core.aci.responses import Response, TaskAssignmentResponse
 from core.sandbox.executor import SandboxExecutor
 from configs.schemas import GodAgentConfig, AgentConfig
-from configs import get_agent_config, get_config
+from configs.settings import get_agent_config, get_config
 
 from core.monitoring import (
     get_metrics_collector,

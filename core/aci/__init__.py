@@ -30,7 +30,7 @@ from .responses import (
     ContextRequestResponse,
     ContextResponseResponse,
 )
-from .validation import ACIDValidator, ValidationResult, sanitize_input, validate_output
+from .validation import ACIValidator, ValidationResult, sanitize_input, validate_output
 
 __all__ = [
     # Interface
@@ -55,7 +55,7 @@ __all__ = [
     "ContextRequestResponse",
     "ContextResponseResponse",
     # Validation
-    "ACIDValidator",
+    "ACIValidator",
     "ValidationResult",
     "sanitize_input",
     "validate_output",

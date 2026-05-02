@@ -91,7 +91,7 @@ class ACIValidator:
     ]
     
     # Allowed characters for different field types
-    SAFE_STRING_PATTERN = re.compile(r'^[\w\s\-.,;:!?@#$%^&*()\[\]{}"' + r"'\\/+=<>`~|]+$', re.UNICODE)
+    SAFE_STRING_PATTERN = re.compile(r'^[a-zA-Z0-9_s]+$', re.UNICODE)
     ID_PATTERN = re.compile(r'^[a-zA-Z][\w\-]*$')
     
     def __init__(self):

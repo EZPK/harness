@@ -20,7 +20,7 @@ from core.sandbox.executor import SandboxExecutor, SandboxResult
 from core.sandbox.permissions import PermissionSystem, get_permission_system
 from core.aci.interface import ACIInterface, InMemoryACI
 from configs.schemas import ToolConfig
-from configs import get_tool_config
+from configs.settings import get_tool_config
 
 from core.monitoring import (
     get_metrics_collector,

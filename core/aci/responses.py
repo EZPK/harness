@@ -142,8 +142,6 @@ class TaskProgressResponse(Response):
         description="Optional feedback on the progress"
     )
     
-    @classmethod
-        return CommandType.TASK_PROGRESS
 
 
 class TaskResultResponse(Response):
@@ -191,8 +189,6 @@ class TaskResultResponse(Response):
         description="Feedback on the result"
     )
     
-    @classmethod
-        return CommandType.TASK_RESULT
 
 
 class TaskErrorResponse(Response):
@@ -240,8 +236,6 @@ class TaskErrorResponse(Response):
         description="Agent to escalate to if error persists"
     )
     
-    @classmethod
-        return CommandType.TASK_ERROR
 
 
 # =============================================================================
@@ -287,8 +281,6 @@ class ContextRequestResponse(Response):
         description="Alternative context options if exact match not found"
     )
     
-    @classmethod
-        return CommandType.CONTEXT_REQUEST
 
 
 class ContextResponseResponse(Response):
@@ -325,8 +317,6 @@ class ContextResponseResponse(Response):
         description="Feedback on the context"
     )
     
-    @classmethod
-        return CommandType.CONTEXT_RESPONSE
 
 
 # =============================================================================
