@@ -11,7 +11,7 @@ try:
     from textual.containers import Container, ScrollableContainer
     from textual.reactive import reactive
     from textual.widget import Widget
-    from textual.widgets import Label, Input, Button, Static
+    from textual.widgets import Label, Input, Button, Static, Select
     HAS_TEXTUAL = True
 except ImportError:
     HAS_TEXTUAL = False
@@ -135,10 +135,16 @@ class ConfigScreen(Widget):
             # Provider
             with Container(classes="config-row"):
                 yield Label("Provider:", classes="config-label")
-                yield Input(
-                    placeholder="ollama, openai, anthropic, etc.",
-                    id="provider-input",
-                    value=self._provider,
+                yield Select(
+                    [("ollama", "Ollama (Local)"),
+                     ("openai", "OpenAI"),
+                     ("mistral", "Mistral"),
+                     ("anthropic", "Anthropic"),
+                     ("google", "Google"),
+                     ("litellm", "LiteLLM"),
+                     ("custom", "Custom")],
+                    id="provider-select",
+                    value=self._provider if self._provider else "ollama",
                 )
             
             # Model
@@ -217,13 +223,13 @@ class ConfigScreen(Widget):
     def _update_input_fields(self) -> None:
         """Update input field values."""
         try:
-            provider_input = self.query_one("#provider-input", Input)
+            provider_select = self.query_one("#provider-select", Select)
             model_input = self.query_one("#model-input", Input)
             base_url_input = self.query_one("#base-url-input", Input)
             api_key_input = self.query_one("#api-key-input", Input)
             
-            if provider_input:
-                provider_input.value = self._provider
+            if provider_select:
+                provider_select.value = self._provider if self._provider else "ollama"
             if model_input:
                 model_input.value = self._model
             if base_url_input:
