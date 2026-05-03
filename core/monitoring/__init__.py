@@ -25,6 +25,7 @@ from .tracing import (
     TraceStatus,
     get_tracer,
     start_span,
+    async_span,
     trace_function,
     trace_method,
 )
@@ -58,6 +59,7 @@ __all__ = [
     "TraceStatus",
     "get_tracer",
     "start_span",
+    "async_span",
     "trace_function",
     "trace_method",
     # Alerts

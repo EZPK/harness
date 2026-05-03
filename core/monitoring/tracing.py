@@ -271,6 +271,7 @@ class Tracer:
         self,
         name: str,
         context: Optional[SpanContext] = None,
+        **kwargs
     ) -> Span:
         """
         Start a new span.
@@ -278,6 +279,7 @@ class Tracer:
         Args:
             name: Name of the span
             context: Span context (created if None)
+            **kwargs: Additional attributes for the span
             
         Returns:
             The new span
@@ -287,6 +289,7 @@ class Tracer:
             return Span(
                 name=name,
                 context=SpanContext.new_root() if context is None else context,
+                attributes=kwargs,
             )
         
         if context is None:
@@ -296,7 +299,10 @@ class Tracer:
             else:
                 context = SpanContext.new_root()
         
-        span = Span(name=name, context=context)
+        # Extract attributes from kwargs
+        attributes = kwargs
+        
+        span = Span(name=name, context=context, attributes=attributes)
         
         # Store the span
         with self._lock:
@@ -544,9 +550,63 @@ def get_tracer() -> Tracer:
     return _tracer
 
 
-def start_span(name: str, context: Optional[SpanContext] = None) -> Span:
-    """Start a new span (convenience function)."""
-    return get_tracer().start_span(name, context)
+def start_span(name: str, context: Optional[SpanContext] = None, **kwargs) -> Span:
+    """
+    Start a new span (convenience function).
+    
+    Args:
+        name: Name of the span
+        context: Optional SpanContext (deprecated: dict is treated as attributes)
+        **kwargs: Additional attributes for the span
+    
+    Note: If context is a dict, it's treated as attributes for backward compatibility.
+    """
+    # Handle backward compatibility: if context is a dict, treat it as attributes
+    if context is not None and isinstance(context, dict) and not isinstance(context, SpanContext):
+        # context was passed as a dict of attributes (old style)
+        # Convert to proper call with context=None and attributes in kwargs
+        kwargs.update(context)
+        context = None
+    
+    return get_tracer().start_span(name, context, **kwargs)
+
+# Async context manager version
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def async_span(name: str, context: Optional[SpanContext] = None, **kwargs) -> Span:
+    """
+    Async context manager for creating a span.
+    
+    Args:
+        name: Name of the span
+        context: Optional SpanContext or dict of attributes
+        **kwargs: Additional attributes for the span
+    
+    Yields:
+        The span
+    """
+    # Handle backward compatibility: if context is a dict, treat it as attributes
+    if context is not None and isinstance(context, dict) and not isinstance(context, SpanContext):
+        kwargs.update(context)
+        context = None
+    
+    span = get_tracer().start_span(name, context, **kwargs)
+    
+    # Set as current span
+    tracer = get_tracer()
+    previous = tracer._current_span
+    tracer._current_span = span
+    
+    try:
+        yield span
+    except Exception as e:
+        span.set_status(TraceStatus.ERROR, str(e))
+        span.add_event("exception", {"type": type(e).__name__, "message": str(e)})
+        raise
+    finally:
+        span.end()
+        tracer._current_span = previous
 
 
 # =============================================================================

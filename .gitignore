@@ -21,11 +21,10 @@ wheels/
 *.egg
 
 # Virtual environments
-.env
-.venv
-env/
+.venv/
 venv/
 ENV/
+env/
 
 # IDE
 .idea/
@@ -34,28 +33,24 @@ ENV/
 *.swo
 *~
 
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-.nox/
-
-# Type checking
-.mypy_cache/
-
 # OS
 .DS_Store
 Thumbs.db
 
-# Logs
+# Project specific
+data/checkpoints/
+data/logs/
+data/metrics/
 *.log
-logs/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
 
-# Local config
+# Local env files
+.env
 .env.local
 .env.*.local
 
-# Harness specific
-checkpoints/
-.sandbox/
+# TUI specific (if any)
+.textual/

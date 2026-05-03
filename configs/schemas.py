@@ -146,7 +146,7 @@ class GodAgentConfig(AgentConfig):
         description="Strategy for decomposing tasks"
     )
     routing_strategy: Literal["keyword", "capability", "hybrid"] = Field(
-        default="keyword",
+        default="hybrid",
         description="Strategy for routing tasks to agents"
     )
 

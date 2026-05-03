@@ -30,6 +30,7 @@ from core.monitoring import (
     get_metrics_collector,
     get_tracer,
     start_span,
+    async_span,
     increment_metric,
     record_metric,
     AlertSeverity,
@@ -790,7 +791,7 @@ class BaseAgent(ABC, Generic[T]):
         """Internal execute with tracing and monitoring."""
         task_type = task.get("type") or task.get("action") or "unknown"
         
-        async with start_span(
+        async with async_span(
             f"{self.name}.execute",
             {"task_id": context.task_id, "task_type": task_type}
         ):
@@ -801,7 +802,7 @@ class BaseAgent(ABC, Generic[T]):
                     f"Agent {self.name} task failed",
                     f"Task {context.task_id} of type {task_type} failed: {e}",
                     severity=AlertSeverity.HIGH,
-                    context={"agent": self.name, "task_id": context.task_id, "task_type": task_type}
+                    data={"agent": self.name, "task_id": context.task_id, "task_type": task_type}
                 )
                 raise
     
@@ -907,7 +908,7 @@ class BaseAgent(ABC, Generic[T]):
             raise AgentError(f"Agent {self.name} does not have permission to use tool '{name}'")
         
         try:
-            async with start_span(f"{self.name}.use_tool", {"tool": name}):
+            async with async_span(f"{self.name}.use_tool", {"tool": name}):
                 result = await tool.execute(*args, **kwargs)
                 increment_metric("tools.executed", labels={"agent": self.name, "tool": name, "status": "success"})
                 return result
@@ -994,7 +995,7 @@ class BaseAgent(ABC, Generic[T]):
             f"Task error received by {self.name}",
             error_msg,
             severity=AlertSeverity.HIGH,
-            context={"agent": self.name, "message_id": getattr(message, 'message_id', 'unknown')}
+            data={"agent": self.name, "message_id": getattr(message, 'message_id', 'unknown')}
         )
         return TaskResultResponse(
             task_id=getattr(message, 'task_id', ''),

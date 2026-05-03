@@ -1,0 +1,462 @@
+{
+  "/home/thomas/Code/harness/__init__.py": {
+    "mtime": 1777756767.7010818,
+    "hash": "349ed86857374cbd3d8adc62111b1992"
+  },
+  "/home/thomas/Code/harness/core/__init__.py": {
+    "mtime": 1777756880.5053093,
+    "hash": "5604cd07d9689b4a4d5d71ee6c02e9ac"
+  },
+  "/home/thomas/Code/harness/core/monitoring/metrics.py": {
+    "mtime": 1777758559.173409,
+    "hash": "a4805e97936970e4b21d5d9206a9cc22"
+  },
+  "/home/thomas/Code/harness/core/monitoring/__init__.py": {
+    "mtime": 1777757145.56633,
+    "hash": "17ee8101ddeaf3364d93f9629073a28b"
+  },
+  "/home/thomas/Code/harness/core/monitoring/tracing.py": {
+    "mtime": 1777757750.5660532,
+    "hash": "32f64b7db401a76714e2c11b91cea771"
+  },
+  "/home/thomas/Code/harness/core/monitoring/alerts.py": {
+    "mtime": 1777758577.4999735,
+    "hash": "fa6935ae680c0a9c2a2748915618075f"
+  },
+  "/home/thomas/Code/harness/core/aci/validation.py": {
+    "mtime": 1777758503.2836118,
+    "hash": "8b738c1b9ac684f64ea9a4515ddbede6"
+  },
+  "/home/thomas/Code/harness/core/aci/responses.py": {
+    "mtime": 1777758295.0581374,
+    "hash": "85c62b51a9dc9baa9df6a2a8bd69bbc4"
+  },
+  "/home/thomas/Code/harness/core/aci/interface.py": {
+    "mtime": 1777756904.7813163,
+    "hash": "b52dafb39ce3c73342167941e5e5ce03"
+  },
+  "/home/thomas/Code/harness/core/aci/commands.py": {
+    "mtime": 1777756933.651214,
+    "hash": "82976aa3d0805cee88ca6ee9a003c8cb"
+  },
+  "/home/thomas/Code/harness/core/aci/__init__.py": {
+    "mtime": 1777758522.7568612,
+    "hash": "3769c94ec0e80f059eea7b57fa7e3aa1"
+  },
+  "/home/thomas/Code/harness/core/checkpointing/__init__.py": {
+    "mtime": 1777756764.8609748,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/core/sandbox/isolation.py": {
+    "mtime": 1777757750.5832052,
+    "hash": "71b33146cc52368a6719bfc85017b46a"
+  },
+  "/home/thomas/Code/harness/core/sandbox/permissions.py": {
+    "mtime": 1777758987.330881,
+    "hash": "086542005466dee8980ea2d4c453c6ce"
+  },
+  "/home/thomas/Code/harness/core/sandbox/__init__.py": {
+    "mtime": 1777758653.633102,
+    "hash": "d35dfe38bd18ee94f6782f18763b5402"
+  },
+  "/home/thomas/Code/harness/core/sandbox/executor.py": {
+    "mtime": 1777757657.658915,
+    "hash": "1c6c09a8beaa0556611588aaf2cbbe43"
+  },
+  "/home/thomas/Code/harness/configs/schemas.py": {
+    "mtime": 1777765454.248825,
+    "hash": "5c9c040f3d94f108e1ec8d1c23a61ea9"
+  },
+  "/home/thomas/Code/harness/configs/__init__.py": {
+    "mtime": 1777756785.848816,
+    "hash": "86da0a7e900dcd76b1efbdb6346762d8"
+  },
+  "/home/thomas/Code/harness/configs/llm_config.py": {
+    "mtime": 1777765387.7821164,
+    "hash": "56acd4634d3cb1d927d3d10b8c2431d2"
+  },
+  "/home/thomas/Code/harness/configs/settings.py": {
+    "mtime": 1777756834.9603457,
+    "hash": "dbbd5dbbb57094c4c6fa3f4602548653"
+  },
+  "/home/thomas/Code/harness/configs/environments/__init__.py": {
+    "mtime": 1777756764.8699358,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/configs/workflows/__init__.py": {
+    "mtime": 1777756764.8727624,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/configs/tools/__init__.py": {
+    "mtime": 1777756764.875575,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/configs/agents/__init__.py": {
+    "mtime": 1777756764.8779047,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/tui/_textual_compat.py": {
+    "mtime": 1777760655.564297,
+    "hash": "38bc98f5df080c78ebf81ba6b6e914bb"
+  },
+  "/home/thomas/Code/harness/tui/__init__.py": {
+    "mtime": 1777760362.5801537,
+    "hash": "4da9c4b74daa36d43e1ee24c377559ad"
+  },
+  "/home/thomas/Code/harness/tui/controller.py": {
+    "mtime": 1777765208.1707673,
+    "hash": "ca9c26c5015dd363816a68b5531b9371"
+  },
+  "/home/thomas/Code/harness/tui/app.py": {
+    "mtime": 1777767978.187537,
+    "hash": "9bdd49d647b80c0dd18f966ce52bcbe0"
+  },
+  "/home/thomas/Code/harness/tui/widgets/task_card.py": {
+    "mtime": 1777762331.5378122,
+    "hash": "dd008efdb24abf331bef6926682002d5"
+  },
+  "/home/thomas/Code/harness/tui/widgets/chat_message.py": {
+    "mtime": 1777761891.5263824,
+    "hash": "9f5b491336c30aad867687cac969f36f"
+  },
+  "/home/thomas/Code/harness/tui/widgets/agent_list.py": {
+    "mtime": 1777762398.9279041,
+    "hash": "7bcceae7dadd20fcc6a38ef392423cec"
+  },
+  "/home/thomas/Code/harness/tui/widgets/agent_card.py": {
+    "mtime": 1777761891.4453056,
+    "hash": "70d4a6bc34073719cc87529377d8b9c5"
+  },
+  "/home/thomas/Code/harness/tui/widgets/workflow_tree.py": {
+    "mtime": 1777761891.5571063,
+    "hash": "9ddf7437d69615f28989347caad920bf"
+  },
+  "/home/thomas/Code/harness/tui/widgets/__init__.py": {
+    "mtime": 1777764969.943756,
+    "hash": "7724cbaf53f4fc97a9ed0be0c97080ed"
+  },
+  "/home/thomas/Code/harness/tui/widgets/metrics_chart.py": {
+    "mtime": 1777761891.5401149,
+    "hash": "08590cd982ebd92f8b0baff1cdc36fcf"
+  },
+  "/home/thomas/Code/harness/tui/widgets/status_bar.py": {
+    "mtime": 1777761891.5464494,
+    "hash": "cc38ad7ddfe8a57c512b3b90e9b98791"
+  },
+  "/home/thomas/Code/harness/tui/widgets/provider_config_modal.py": {
+    "mtime": 1777767125.0036404,
+    "hash": "c142f7dd1e33b8085291ffe68bb3d7ee"
+  },
+  "/home/thomas/Code/harness/tui/widgets/task_list.py": {
+    "mtime": 1777762408.852547,
+    "hash": "72b8be2328c150805d8ef5271b243fdb"
+  },
+  "/home/thomas/Code/harness/tui/widgets/chat_input.py": {
+    "mtime": 1777765003.536738,
+    "hash": "47dd3d79645eaf625a0e2e82d7e2d810"
+  },
+  "/home/thomas/Code/harness/tui/screens/tasks_screen.py": {
+    "mtime": 1777762857.5651717,
+    "hash": "cce9dff9f1e7965a2673943f41842062"
+  },
+  "/home/thomas/Code/harness/tui/screens/workflows_screen.py": {
+    "mtime": 1777762860.0776844,
+    "hash": "bc9ddc9a074bd243649ac7d9eb47e87d"
+  },
+  "/home/thomas/Code/harness/tui/screens/__init__.py": {
+    "mtime": 1777761891.5669394,
+    "hash": "6bc44fb152bcd4588d90a295355388c7"
+  },
+  "/home/thomas/Code/harness/tui/screens/chat_screen.py": {
+    "mtime": 1777767104.063935,
+    "hash": "cd68f25c4fc8cce4980c66261131fee3"
+  },
+  "/home/thomas/Code/harness/tui/screens/agents_screen.py": {
+    "mtime": 1777762854.5657027,
+    "hash": "fd7c38f2bb2d9c41b8944b7be01d9324"
+  },
+  "/home/thomas/Code/harness/tui/screens/metrics_screen.py": {
+    "mtime": 1777762862.3170903,
+    "hash": "361b192cf78ee62bac10deed0fc712fd"
+  },
+  "/home/thomas/Code/harness/tui/models/converters.py": {
+    "mtime": 1777760316.2930436,
+    "hash": "765566b6f221edb719695f190a580714"
+  },
+  "/home/thomas/Code/harness/tui/models/__init__.py": {
+    "mtime": 1777760356.5331755,
+    "hash": "03fb925c315b0ddec1b418927e1a30f9"
+  },
+  "/home/thomas/Code/harness/tui/models/display_models.py": {
+    "mtime": 1777760284.360978,
+    "hash": "2000d9d9d35f4fd30beec06d3ee740d8"
+  },
+  "/home/thomas/Code/harness/tui/styles/theme.py": {
+    "mtime": 1777762429.350001,
+    "hash": "b652c31981bf25485767928425e2d761"
+  },
+  "/home/thomas/Code/harness/tui/styles/__init__.py": {
+    "mtime": 1777761891.580002,
+    "hash": "0a53cd6335cf5645ff38d1f0ee8dd195"
+  },
+  "/home/thomas/Code/harness/tui/events/__init__.py": {
+    "mtime": 1777760594.728052,
+    "hash": "927ae77b303e80c766d21d9ea4dba3eb"
+  },
+  "/home/thomas/Code/harness/providers/registry.py": {
+    "mtime": 1777763900.1819694,
+    "hash": "251398da60449d694030bb2cfba317f0"
+  },
+  "/home/thomas/Code/harness/providers/lite_llm.py": {
+    "mtime": 1777763864.4126027,
+    "hash": "c400eedb3caedadc271ffcc16e060ba4"
+  },
+  "/home/thomas/Code/harness/providers/openai_compatible.py": {
+    "mtime": 1777763886.1989806,
+    "hash": "3564a2cc8b5a85730214bfb1ef2ed482"
+  },
+  "/home/thomas/Code/harness/providers/__init__.py": {
+    "mtime": 1777764066.3399348,
+    "hash": "eacff12e77facbb157c6d12e5749e132"
+  },
+  "/home/thomas/Code/harness/providers/base.py": {
+    "mtime": 1777763852.2520857,
+    "hash": "d97f4f054a21df6c9d5885cb477400d3"
+  },
+  "/home/thomas/Code/harness/orchestration/__init__.py": {
+    "mtime": 1777756764.880856,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/orchestration/routing/__init__.py": {
+    "mtime": 1777756764.8837607,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/orchestration/messaging/__init__.py": {
+    "mtime": 1777756764.886488,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/workflows/__init__.py": {
+    "mtime": 1777756764.8894136,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/workflows/templates/__init__.py": {
+    "mtime": 1777756764.8920534,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/workflows/steps/__init__.py": {
+    "mtime": 1777756764.8945699,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/workflows/definitions/__init__.py": {
+    "mtime": 1777756764.897131,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/index.ts": {
+    "mtime": 1777770817.4698334,
+    "hash": "5a2103e4c51b5bc862cb60bff3c6356e"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/test.ts": {
+    "mtime": 1777771109.0081997,
+    "hash": "d37d1181c650d8567e108b869a7a732c"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/core/index.ts": {
+    "mtime": 1777770416.4199421,
+    "hash": "e920e5280be97adb718307965f9ed75e"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/core/monitoring/index.ts": {
+    "mtime": 1777769629.9487128,
+    "hash": "4b42f987922750ac0e7a9f1b20525ecc"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/core/monitoring/tracing.ts": {
+    "mtime": 1777769622.1375377,
+    "hash": "9da604a635b5ca55cc98a0c2cfcfc6a3"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/core/monitoring/metrics.ts": {
+    "mtime": 1777770446.9777915,
+    "hash": "7399efa63a8b086a8b47b99ef027abe4"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/core/monitoring/alerts.ts": {
+    "mtime": 1777770440.8258255,
+    "hash": "271ed4e0695e15be71d20c00fffac077"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/configs/index.ts": {
+    "mtime": 1777769337.2926524,
+    "hash": "8d8a69311d704909d9183c173e895ece"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/configs/settings.ts": {
+    "mtime": 1777770398.1771574,
+    "hash": "159230a4c517339dc75f5c364fdccb8f"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/configs/schemas.ts": {
+    "mtime": 1777770407.0221841,
+    "hash": "4582d4850f50cfc650497aa2432d3a36"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/providers/index.ts": {
+    "mtime": 1777768847.8687181,
+    "hash": "b951f7e9988b78da209fd3d473e58154"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/providers/registry.ts": {
+    "mtime": 1777770926.1817667,
+    "hash": "e3de3976cfb05b98f56f59921968c4c1"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/providers/config.ts": {
+    "mtime": 1777771018.028989,
+    "hash": "0f9667590063d685fda72c06ad8c8d6d"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/tools/index.ts": {
+    "mtime": 1777768847.8687181,
+    "hash": "b1f01050c089d421c2878720e854d6cc"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/agents/base.ts": {
+    "mtime": 1777770044.4276998,
+    "hash": "0cddfcdc9d0f45904bec686866b1ea72"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/agents/index.ts": {
+    "mtime": 1777768847.867718,
+    "hash": "23951dfdafc8af66ffb76bed90b1dc7c"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/agents/registry.ts": {
+    "mtime": 1777770955.5257015,
+    "hash": "e3cfb1d5fe3b91296c3e86fa5d36318e"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/agents/specialists/llm.ts": {
+    "mtime": 1777770339.9860027,
+    "hash": "ecf884a1747ff543d8f204e534208719"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/agents/god/agent.ts": {
+    "mtime": 1777770335.1866195,
+    "hash": "3a513aa07e1e805e4289b8982633cd40"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/agents/god/router.ts": {
+    "mtime": 1777770053.0287728,
+    "hash": "52863292048cea753dccb15ff234b260"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/agents/god/aggregator.ts": {
+    "mtime": 1777769784.0637686,
+    "hash": "e9a5ae9fa1f9136b234cb452b9bc7974"
+  },
+  "/home/thomas/Code/harness/harness-ts/src/agents/god/decomposer.ts": {
+    "mtime": 1777770066.40082,
+    "hash": "86987abc7ee06b2f30a4d40d3777c1ff"
+  },
+  "/home/thomas/Code/harness/scripts/run_tui.py": {
+    "mtime": 1777761640.082691,
+    "hash": "1530894f4297212f2c94c03498560ade"
+  },
+  "/home/thomas/Code/harness/scripts/setup_llm.py": {
+    "mtime": 1777763952.2846603,
+    "hash": "b663145bb11063b93fe2f7b5813ddf38"
+  },
+  "/home/thomas/Code/harness/scripts/run_tui_with_llm.py": {
+    "mtime": 1777765405.4287643,
+    "hash": "00bc9fc5f976d1f0a5c6bbd4b6ac1777"
+  },
+  "/home/thomas/Code/harness/tools/registry.py": {
+    "mtime": 1777759053.866699,
+    "hash": "43da5ad61c8854ba51b63778845c564a"
+  },
+  "/home/thomas/Code/harness/tools/__init__.py": {
+    "mtime": 1777757553.8213549,
+    "hash": "7817230b5ba10d5979b70dea147241d9"
+  },
+  "/home/thomas/Code/harness/tools/implementations/__init__.py": {
+    "mtime": 1777756764.9030218,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/tools/implementations/dev_tools/__init__.py": {
+    "mtime": 1777756764.9055467,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/tools/safety/__init__.py": {
+    "mtime": 1777756764.9079623,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/tools/base/__init__.py": {
+    "mtime": 1777757475.0326,
+    "hash": "0058b373538a2c4e73973c03b8980ad3"
+  },
+  "/home/thomas/Code/harness/tools/base/tool.py": {
+    "mtime": 1777759049.041778,
+    "hash": "c17bbf270f2bcb4fe2df3f01563a8e96"
+  },
+  "/home/thomas/Code/harness/agents/__init__.py": {
+    "mtime": 1777759096.2330441,
+    "hash": "dedc3abe61e07cad25f9192f67f474cd"
+  },
+  "/home/thomas/Code/harness/agents/specialists/llm_agent.py": {
+    "mtime": 1777764131.1677728,
+    "hash": "8adc3cacc5d6d174244872b643df9878"
+  },
+  "/home/thomas/Code/harness/agents/specialists/__init__.py": {
+    "mtime": 1777763922.7678163,
+    "hash": "c226a25db3ff51c1e9229cb2f786f048"
+  },
+  "/home/thomas/Code/harness/agents/specialists/researcher/__init__.py": {
+    "mtime": 1777756764.9191968,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/agents/specialists/tester/__init__.py": {
+    "mtime": 1777756764.922071,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/agents/specialists/debugger/__init__.py": {
+    "mtime": 1777756764.924398,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/agents/specialists/reviewer/__init__.py": {
+    "mtime": 1777756764.9269974,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/agents/specialists/coder/__init__.py": {
+    "mtime": 1777756764.929625,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/agents/specialists/planner/__init__.py": {
+    "mtime": 1777756764.932501,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/agents/specialists/documenter/__init__.py": {
+    "mtime": 1777756764.9350293,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/agents/base/agent.py": {
+    "mtime": 1777759269.1329677,
+    "hash": "0455a65299bc95571a2b8dd07002a437"
+  },
+  "/home/thomas/Code/harness/agents/base/__init__.py": {
+    "mtime": 1777757399.5310304,
+    "hash": "06877c6a6c99bb8e73c3ac1069c0832c"
+  },
+  "/home/thomas/Code/harness/agents/god/agent.py": {
+    "mtime": 1777759028.9837208,
+    "hash": "9acddb75deded4a1c49efc8e0fe07b75"
+  },
+  "/home/thomas/Code/harness/agents/god/__init__.py": {
+    "mtime": 1777757576.9561327,
+    "hash": "4b7a90406d78f91380ef97fc0df938f0"
+  },
+  "/home/thomas/Code/harness/agents/patterns/__init__.py": {
+    "mtime": 1777756764.9409776,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/thomas/Code/harness/requirements.txt": {
+    "mtime": 1777761653.0929666,
+    "hash": "d712c4964bd8a919f50c7214c9a8b73f"
+  },
+  "/home/thomas/Code/harness/requirements-dev.txt": {
+    "mtime": 1777761091.3754618,
+    "hash": "27b4e26a84a49b655f1adf934a504878"
+  },
+  "/home/thomas/Code/harness/configs/tools.yaml": {
+    "mtime": 1777756861.6461244,
+    "hash": "2f3bf330227a2b1ee696f98b997a0204"
+  },
+  "/home/thomas/Code/harness/configs/workflows.yaml": {
+    "mtime": 1777756876.0780096,
+    "hash": "e044127366d93657977a369528d443f8"
+  },
+  "/home/thomas/Code/harness/configs/agents.yaml": {
+    "mtime": 1777756847.6831295,
+    "hash": "0a37a680cf600ad16675c849c4dc2f25"
+  }
+}

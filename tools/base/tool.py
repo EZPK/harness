@@ -26,6 +26,7 @@ from core.monitoring import (
     get_metrics_collector,
     get_tracer,
     start_span,
+    async_span,
     increment_metric,
     AlertSeverity,
     raise_alert,
@@ -591,7 +592,7 @@ class BaseTool(ABC):
         max_retries = max_retries or self._config.max_retries or self.DEFAULT_RETRIES
         
         try:
-            async with start_span(
+            async with async_span(
                 f"{self.name}.execute",
                 {
                     "execution_id": execution_id,

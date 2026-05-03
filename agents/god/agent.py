@@ -12,7 +12,7 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple, Callable, Awaitable
+from typing import Any, Dict, List, Optional, Set, Tuple, Callable, Awaitable, AsyncIterator
 
 from pydantic import BaseModel, Field
 
@@ -27,6 +27,8 @@ from agents.base import (
     AgentError,
     TaskError,
 )
+from agents.god.agent_spawner import AgentSpawner
+from configs.schemas import AgentCapability
 from core.aci.interface import ACIInterface, InMemoryACI, MessageMetadata
 from core.aci.commands import Command, TaskAssignmentCommand, TaskResultCommand
 from core.aci.responses import Response, TaskAssignmentResponse
@@ -836,6 +838,13 @@ class GodAgent(HybridAgent):
         self._task_router.strategy = self._routing_strategy
         self._task_decomposer.strategy = self._decomposition_strategy
         
+        # Chat integration with Ollama
+        self._llm_agent: Optional[Any] = None
+        self._chat_history: List[Dict[str, Any]] = []
+        
+        # Agent spawning via tmux
+        self._agent_spawner = AgentSpawner()
+        
         # Monitoring
         increment_metric("god.initialized", labels={"agent": self.name})
     
@@ -888,7 +897,75 @@ class GodAgent(HybridAgent):
         # Initialize specialist agents (if configured)
         await self._initialize_specialists()
         
+        # Initialize LLMAgent with Ollama for chat
+        await self._initialize_llm_agent()
+        
+        # Initialize AgentSpawner for dynamic agent creation
+        self._agent_spawner.set_god_reference(self)
+        
         self.log("God Agent initialized", "INFO")
+    
+    async def _initialize_llm_agent(self) -> None:
+        """Initialize LLMAgent with Ollama for chat interface."""
+        from agents.specialists.llm_agent import LLMAgent
+        from providers.registry import get_registry
+        from providers.openai_compatible import OpenAICompatibleProvider
+        from configs.llm_config import get_llm_config
+        
+        registry = get_registry()
+        
+        # Always create/use Ollama provider with configured model
+        config = get_llm_config()
+        model = config.ollama_model or "smollm:135m"
+        base_url = config.ollama_base_url or "http://localhost:11434/v1"
+        
+        # Get existing provider or create new one
+        provider = registry.get("ollama")
+        if provider is None:
+            # Create new provider
+            provider = OpenAICompatibleProvider(
+                model=model,
+                api_base_url=base_url,
+                temperature=0.7,
+                max_tokens=4096,
+                timeout=120.0,
+            )
+            registry.register("ollama", provider, as_default=True)
+        else:
+            # Update existing provider with configured model
+            provider.model = model
+            provider.api_base_url = base_url
+        
+        # Create LLMAgent with conversation-focused system prompt
+        self._llm_agent = LLMAgent(
+            name="GodChatLLMAgent",
+            provider=provider,
+            system_prompt="""
+            Tu es l'interface conversationnelle de GodAgent, le système multi-agents Harness.
+            
+            Tes responsabilités :
+            - Répondre aux questions de l'utilisateur directement
+            - Évaluer si une demande nécessite un agent spécialisé
+            - Expliquer le fonctionnement du swarm
+            - Aider à la configuration
+            - Coordonner les tâches entre agents
+            
+            Règles :
+            - Réponds TOUJOURS en français si l'utilisateur écrit en français
+            - Sois concis mais complet
+            - Si une tâche nécessite un agent spécialisé, je vais m'en occuper
+            - Indique toujours l'ID de la tâche si tu en crées une
+            - Utilise un ton professionnel mais amical
+            """
+        )
+        
+        # Initialize the agent
+        await self._llm_agent.initialize()
+        
+        # Register it so it can be used for tasks too
+        await self.register_agent(self._llm_agent)
+        
+        self.log(f"LLMAgent initialized with provider: {provider.model}", "INFO")
     
     async def _do_shutdown(self) -> None:
         """Shutdown the God Agent."""
@@ -1410,5 +1487,393 @@ class GodAgent(HybridAgent):
         
         return responses
     
+    # =========================================================================
+    # Chat Interface Methods
+    # =========================================================================
+    
+    async def chat(self, message: str, user_request: Optional[str] = None) -> str:
+        """
+        Single entry point for all chat interactions.
+        
+        This is the main method for handling user messages from the chat.
+        It evaluates the message and routes it appropriately:
+        - Commands (starting with /) → _handle_chat_command()
+        - Task requests → _handle_chat_task()
+        - Conversation → _handle_conversation()
+        
+        Args:
+            message: User message from chat
+            user_request: Optional user request for context
+            
+        Returns:
+            Formatted chat response
+        """
+        message = message.strip()
+        if not message:
+            return ""
+        
+        # Add to conversation history
+        self._chat_history.append({
+            "role": "user",
+            "content": message,
+            "timestamp": datetime.utcnow(),
+        })
+        
+        # Handle commands
+        if message.startswith("/"):
+            return await self._handle_chat_command(message)
+        
+        # Handle task requests
+        if self._is_task_request(message):
+            return await self._handle_chat_task(message, user_request)
+        
+        # Default: conversation mode
+        return await self._handle_conversation(message)
+    
+    async def chat_stream(self, message: str, user_request: Optional[str] = None) -> AsyncIterator[str]:
+        """
+        Streaming version of chat for real-time responses.
+        
+        Yields message chunks as they become available, providing a fluid
+        chat experience with thinking indicators and progressive reveals.
+        
+        Args:
+            message: User message from chat
+            user_request: Optional user request for context
+            
+        Yields:
+            Chunks of the response as they are generated
+        """
+        message = message.strip()
+        if not message:
+            return
+        
+        # Add to conversation history
+        self._chat_history.append({
+            "role": "user",
+            "content": message,
+            "timestamp": datetime.utcnow(),
+        })
+        
+        # Yield user message echo
+        yield f"[User] {message}\n\n"
+        
+        # Handle commands (non-streaming, return complete response)
+        if message.startswith("/"):
+            result = await self._handle_chat_command(message)
+            yield f"[System] {result}"
+            return
+        
+        # Handle task requests with streaming
+        if self._is_task_request(message):
+            async for chunk in self._handle_chat_task_stream(message, user_request):
+                yield chunk
+            return
+        
+        # Conversation mode with streaming
+        async for chunk in self._handle_conversation_stream(message):
+            yield chunk
+    
+    def _is_task_request(self, message: str) -> bool:
+        """Determine if a message is a task request based on keywords.
+        
+        A message is considered a task request if it starts with a task-related keyword
+        or contains a keyword at the beginning of a sentence (after punctuation).
+        This prevents casual conversation from being treated as tasks.
+        """
+        message_lower = message.lower().strip()
+        task_keywords = [
+            "implément", "implement", "coder", "code", "écrire", "write",
+            "créer", "create", "fix", "fixer", "corriger", "bug",
+            "review", "revue", "analyser", "analyze", "debug", "debugger",
+            "test", "tester", "optimiser", "optimize", "refactor", "refactorer",
+            "planifier", "plan", "design", "architecture", "concevoir",
+            "rechercher", "research", "investiguer", "investigate",
+            "documenter", "document", "doc", "readme", "tutoriel",
+        ]
+        
+        # Check if message starts with a keyword (as a word, not substring)
+        # This handles: "Code me...", "Fix the...", "Implement...", etc.
+        for kw in task_keywords:
+            # Check if message starts with keyword + space/punctuation/end
+            if (message_lower.startswith(kw + " ") or 
+                message_lower.startswith(kw + "!") or 
+                message_lower.startswith(kw + "?") or
+                message_lower.startswith(kw + ".") or
+                message_lower == kw):
+                return True
+        
+        return False
+    
+    def _classify_task(self, description: str) -> Tuple[str, List[str]]:
+        """Classify a task and determine required capabilities."""
+        description_lower = description.lower()
+        classifiers = [
+            ("implement", "implement_feature", ["coding", "llm", "text_generation"]),
+            ("coder", "code", ["coding", "llm"]),
+            ("fix", "fix_bug", ["debugging", "coding", "llm"]),
+            ("corriger", "fix_bug", ["debugging", "coding", "llm"]),
+            ("refactor", "refactor_code", ["coding", "review", "llm"]),
+            ("optimize", "optimize", ["analysis", "coding", "llm"]),
+            ("review", "code_review", ["review", "analysis", "llm"]),
+            ("revue", "code_review", ["review", "analysis", "llm"]),
+            ("analyser", "analyze", ["analysis", "review", "llm"]),
+            ("audit", "security_audit", ["security", "review", "analysis"]),
+            ("test", "write_tests", ["testing", "coding", "llm"]),
+            ("tester", "run_tests", ["testing", "execution"]),
+            ("plan", "plan", ["planning", "analysis", "llm"]),
+            ("design", "design", ["planning", "architecture", "llm"]),
+            ("rechercher", "research", ["research", "analysis", "llm"]),
+            ("investiguer", "investigate", ["research", "debugging", "llm"]),
+            ("documenter", "write_docs", ["documentation", "llm", "text_generation"]),
+        ]
+        for keyword, task_type, capabilities in classifiers:
+            if keyword in description_lower:
+                return task_type, capabilities
+        return "text_generation", ["llm", "text_generation", "reasoning"]
+    
+    async def _get_or_spawn_agent_for_task(self, task: Dict[str, Any], context: TaskContext) -> Optional[str]:
+        """Find an available agent for a task or spawn one if needed."""
+        required_caps = set(task.get("capabilities", []))
+        
+        # Check existing registered agents
+        for agent_name in self._agent_registry.get_agent_names():
+            agent = self._agent_registry.get(agent_name)
+            if agent and agent.is_available:
+                agent_caps = set(cap.name.lower() for cap in agent.capabilities)
+                if required_caps.issubset(agent_caps):
+                    return agent_name
+        
+        # No existing agent found, try to spawn one
+        agent_name = self._task_router.route(task, context)
+        if agent_name:
+            success = await self._agent_spawner.spawn_agent(agent_name)
+            if success:
+                await asyncio.sleep(0.5)
+                return agent_name
+        return None
+    
+    async def _handle_conversation(self, message: str) -> str:
+        """Handle direct conversation using integrated LLMAgent."""
+        if self._llm_agent is None:
+            raise RuntimeError("LLMAgent not initialized")
+        try:
+            response = await self._llm_agent.complete(prompt=message, temperature=0.7)
+            self._chat_history.append({"role": "assistant", "content": response, "timestamp": datetime.utcnow()})
+            return response
+        except Exception as e:
+            self.log(f"Error in conversation: {e}", "ERROR")
+            return f"Erreur lors de la conversation: {e}"
+    
+    async def _handle_conversation_stream(self, message: str) -> AsyncIterator[str]:
+        """Stream conversation responses via LLMAgent."""
+        if self._llm_agent is None:
+            raise RuntimeError("LLMAgent not initialized")
+        
+        # Get full response first
+        full_response = await self._llm_agent.complete(prompt=message, temperature=0.7)
+        
+        # Add to history
+        self._chat_history.append({"role": "assistant", "content": full_response, "timestamp": datetime.utcnow()})
+        
+        # Simulate streaming word by word for fluid UX
+        for word in full_response.split():
+            yield word + " "
+            await asyncio.sleep(0.01)
+    
+    async def _handle_chat_task(self, description: str, user_request: Optional[str]) -> str:
+        """Handle a task request from chat."""
+        task_id = str(uuid.uuid4())
+        task_type, capabilities = self._classify_task(description)
+        task = {"task_id": task_id, "description": description, "type": task_type, "capabilities": capabilities}
+        context = TaskContext(task_id=task_id, user_request=user_request or description, metadata={"chat_mode": True, "source": "chat"})
+        agent_name = await self._get_or_spawn_agent_for_task(task, context)
+        if agent_name:
+            try:
+                result = await self._execute_task(task, context)
+                return self._format_task_result(task_id, result, agent_name)
+            except Exception as e:
+                return f"[Tâche {task_id}] ✗ Erreur: {e}"
+        else:
+            response = await self._llm_agent.complete(f"Tâche à exécuter: {description}\n\nAnalyse cette tâche et propose une solution détaillée.")
+            return f"[Tâche {task_id}] {response}"
+    
+    async def _handle_chat_task_stream(self, description: str, user_request: Optional[str]) -> AsyncIterator[str]:
+        """Handle a task request with streaming updates."""
+        task_id = str(uuid.uuid4())
+        task_type, capabilities = self._classify_task(description)
+        yield f"[Tâche {task_id}] Analyse de la demande...\n"
+        yield f"[Tâche {task_id}] Type: {task_type}\n"
+        yield f"[Tâche {task_id}] Capacités requises: {', '.join(capabilities)}\n"
+        task = {"task_id": task_id, "description": description, "type": task_type, "capabilities": capabilities}
+        context = TaskContext(task_id=task_id, user_request=user_request or description, metadata={"chat_mode": True, "source": "chat"})
+        yield f"[Tâche {task_id}] Recherche d'un agent disponible...\n"
+        agent_name = await self._get_or_spawn_agent_for_task(task, context)
+        if agent_name:
+            yield f"[Tâche {task_id}] Agent trouvé: {agent_name}\n"
+            yield f"[Tâche {task_id}] Délégation à {agent_name}...\n"
+            async for chunk in self._execute_task_stream(task, context, agent_name):
+                yield chunk
+        else:
+            yield f"[Tâche {task_id}] Aucun agent spécialisé disponible.\n"
+            yield f"[Tâche {task_id}] Utilisation de LLMAgent...\n"
+            async for chunk in self._handle_conversation_stream(f"Tâche à exécuter: {description}\n\nAnalyse cette tâche et propose une solution détaillée."):
+                yield f"[Tâche {task_id}] {chunk}"
+    
+    async def _execute_task_stream(self, task: Dict[str, Any], context: TaskContext, agent_name: str) -> AsyncIterator[str]:
+        """Execute a task and stream the results."""
+        agent = self._agent_registry.get(agent_name)
+        if agent is None:
+            yield f"Erreur: Agent {agent_name} introuvable\n"
+            return
+        yield f"[Tâche {context.task_id}] Début d'exécution sur {agent_name}\n"
+        try:
+            result = await agent.execute(task, **context.__dict__)
+            if isinstance(result, dict):
+                content = result.get("output", result.get("result", str(result)))
+            else:
+                content = str(result)
+            for line in content.split('\n'):
+                if line.strip():
+                    yield f"[Tâche {context.task_id}] {line}\n"
+                    await asyncio.sleep(0.01)
+            yield f"[Tâche {context.task_id}] ✓ Tâche terminée\n"
+        except Exception as e:
+            yield f"[Tâche {context.task_id}] ✗ Erreur: {e}\n"
+    
+    def _format_task_result(self, task_id: str, result: Any, agent_name: str) -> str:
+        """Format task result for chat display."""
+        if isinstance(result, dict):
+            content = result.get("output", result.get("result", str(result)))
+        else:
+            content = str(result)
+        return f"[Tâche {task_id}] → {agent_name}: {content[:200]}"
+    
+    async def _handle_chat_command(self, command: str) -> str:
+        """Handle chat commands (starting with /)."""
+        parts = command[1:].strip().split(None, 1)
+        cmd = parts[0].lower() if parts else ""
+        args = parts[1] if len(parts) > 1 else ""
+        handlers = {
+            "agents": self._cmd_agents,
+            "tasks": self._cmd_tasks,
+            "workflows": self._cmd_workflows,
+            "spawn": self._cmd_spawn,
+            "kill": self._cmd_kill,
+            "clear": self._cmd_clear_chat,
+            "help": self._cmd_help,
+            "status": self._cmd_status,
+            "ollama": self._cmd_ollama,
+        }
+        handler = handlers.get(cmd)
+        if handler:
+            return await handler(args)
+        return f"Commande inconnue: /{cmd}. Disponibles: {', '.join(sorted(handlers.keys()))}"
+    
+    # Command handlers
+    async def _cmd_agents(self, args: str) -> str:
+        """List available agents."""
+        lines = ["Agents disponibles:"]
+        for name in self._agent_registry.get_agent_names():
+            agent = self._agent_registry.get(name)
+            status = agent.state.value if agent else "unknown"
+            lines.append(f"  • {name} ({status})")
+        spawned = self._agent_spawner.list_spawned()
+        if spawned:
+            lines.extend(["", "Agents spawnés (tmux):"])
+            for an, session in spawned.items():
+                lines.append(f"  • {an} (tmux:{session})")
+        return "\n".join(lines)
+    
+    async def _cmd_spawn(self, args: str) -> str:
+        """Spawn a specialized agent manually."""
+        if not args:
+            return "Usage: /spawn <agent_name> (ex: /spawn CoderAgent)"
+        success = await self._agent_spawner.spawn_agent(args.strip())
+        return f"✓ Agent {args.strip()} spawné avec succès" if success else f"✗ Échec du spawn de {args.strip()}"
+    
+    async def _cmd_kill(self, args: str) -> str:
+        """Kill a spawned agent."""
+        if not args:
+            return "Usage: /kill <agent_name>"
+        success = await self._agent_spawner.kill_agent(args.strip())
+        return f"✓ Agent {args.strip()} terminé" if success else f"✗ Agent {args.strip()} introuvable ou déjà terminé"
+    
+    async def _cmd_clear_chat(self, args: str) -> str:
+        """Clear chat history."""
+        self._chat_history = []
+        if self._llm_agent:
+            self._llm_agent.clear_conversation()
+        return "✓ Historique de chat effacé"
+    
+    async def _cmd_ollama(self, args: str) -> str:
+        """Manage Ollama configuration."""
+        parts = args.strip().split()
+        if not parts:
+            from configs.llm_config import get_llm_config
+            config = get_llm_config()
+            return f"Configuration Ollama:\n  Modèle: {config.ollama_model}\n  URL: {config.ollama_base_url}"
+        subcmd = parts[0].lower()
+        if subcmd == "set" and len(parts) >= 2:
+            model = parts[1]
+            from configs.llm_config import reload_llm_config
+            config = get_llm_config()
+            config.ollama_model = model
+            reload_llm_config()
+            if self._llm_agent:
+                from providers.registry import get_registry
+                from providers.openai_compatible import OpenAICompatibleProvider
+                registry = get_registry()
+                new_provider = OpenAICompatibleProvider(model=model, api_base_url=config.ollama_base_url or "http://localhost:11434/v1", temperature=0.7, max_tokens=4096, timeout=120.0)
+                registry.register("ollama", new_provider, as_default=True)
+                self._llm_agent.set_provider(new_provider)
+            return f"✓ Modèle Ollama mis à jour: {model}"
+        return "Usage: /ollama [set <model>]"
+    
+    async def _cmd_help(self, args: str) -> str:
+        """Show help."""
+        return """Commandes disponibles:
+  /agents          - Liste les agents disponibles
+  /spawn <name>   - Spawn un agent spécialisé
+  /kill <name>    - Termine un agent spawné
+  /tasks          - Liste les tâches actives
+  /workflows      - Liste les workflows
+  /clear          - Efface l'historique de chat
+  /ollama [set]   - Configure Ollama
+  /status         - Affiche le status du système
+  /help           - Affiche cette aide
+  /quit           - Quitte l'application
+
+Ou écrivez simplement votre message pour discuter avec GodAgent."""
+    
+    async def _cmd_status(self, args: str) -> str:
+        """Show system status."""
+        status = self.get_status()
+        lines = ["Status du système:", f"  État: {status['state']}", f"  Agents enregistrés: {status['registered_agents']}", f"  Tâches actives: {status['active_assignments']}", f"  Workflows: {status['active_workflows']}"]
+        lines.append(f"  Agents spawnés (tmux): {len(self._agent_spawner.list_spawned())}")
+        if self._llm_agent:
+            lines.extend([f"  LLMAgent: {self._llm_agent.name}", f"  Modèle: {self._llm_agent.provider.model}"])
+        return "\n".join(lines)
+    
+    async def _cmd_tasks(self, args: str) -> str:
+        """List active tasks."""
+        assignments = self._active_assignments
+        if not assignments:
+            return "Aucune tâche active"
+        lines = [f"Tâches actives ({len(assignments)}):"]
+        for assignment_id, assignment in assignments.items():
+            lines.append(f"  • {assignment.task_id}: {assignment.status}")
+        return "\n".join(lines)
+    
+    async def _cmd_workflows(self, args: str) -> str:
+        """List workflows."""
+        workflows = self._workflows
+        if not workflows:
+            return "Aucun workflow actif"
+        lines = [f"Workflows ({len(workflows)}):"]
+        for wf_id, wf in workflows.items():
+            lines.append(f"  • {wf.name}: {wf.status}")
+        return "\n".join(lines)
+
     def __repr__(self) -> str:
         return f"GodAgent(name={self.name!r}, state={self.state.value!r}, agents={len(self._agent_registry.get_agent_names())})"
