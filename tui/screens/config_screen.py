@@ -136,13 +136,13 @@ class ConfigScreen(Widget):
             with Container(classes="config-row"):
                 yield Label("Provider:", classes="config-label")
                 yield Select(
-                    [("ollama", "Ollama (Local)"),
-                     ("openai", "OpenAI"),
-                     ("mistral", "Mistral"),
-                     ("anthropic", "Anthropic"),
-                     ("google", "Google"),
-                     ("litellm", "LiteLLM"),
-                     ("custom", "Custom")],
+                    [("Ollama (Local)", "ollama"),
+                     ("OpenAI", "openai"),
+                     ("Mistral", "mistral"),
+                     ("Anthropic", "anthropic"),
+                     ("Google", "google"),
+                     ("LiteLLM", "litellm"),
+                     ("Custom", "custom")],
                     id="provider-select",
                     value=self._provider if self._provider else "ollama",
                 )
@@ -267,12 +267,12 @@ class ConfigScreen(Widget):
         """Save the configuration."""
         try:
             # Get values from inputs
-            provider_input = self.query_one("#provider-input", Input)
+            provider_select = self.query_one("#provider-select", Select)
             model_input = self.query_one("#model-input", Input)
             base_url_input = self.query_one("#base-url-input", Input)
             api_key_input = self.query_one("#api-key-input", Input)
             
-            provider = provider_input.value.strip() if provider_input else ""
+            provider = provider_select.value if provider_select else ""
             model = model_input.value.strip() if model_input else ""
             base_url = base_url_input.value.strip() if base_url_input else ""
             api_key = api_key_input.value.strip() if api_key_input else ""
@@ -417,11 +417,11 @@ class ConfigScreen(Widget):
     async def _test_connection(self) -> None:
         """Test the connection to the LLM provider."""
         try:
-            provider_input = self.query_one("#provider-input", Input)
+            provider_select = self.query_one("#provider-select", Select)
             model_input = self.query_one("#model-input", Input)
             base_url_input = self.query_one("#base-url-input", Input)
             
-            provider = provider_input.value.strip() if provider_input else ""
+            provider = provider_select.value if provider_select else ""
             model = model_input.value.strip() if model_input else ""
             base_url = base_url_input.value.strip() if base_url_input else ""
             
